@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no">
+  <title>Keuangan Keluarga</title>
+  <style>
+    * { box-sizing: border-box; }
+    html, body {
+      margin: 0;
+      padding: 0;
+      height: 100%;
+      background: #0f172a;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+    }
+
+    /* Wrapper agar rasio mobile terlihat rapi juga saat dibuka di desktop */
+    .app-wrapper {
+      max-width: 480px;
+      margin: 0 auto;
+      height: 100vh;
+      background: #f4f6fb;
+      box-shadow: 0 0 40px rgba(0,0,0,0.4);
+      position: relative;
+    }
+
+    iframe#appFrame {
+      width: 100%;
+      height: 100%;
+      border: none;
+      display: block;
+    }
+
+    /* Loading overlay ditampilkan sampai iframe selesai load */
+    #loadingOverlay {
+      position: absolute;
+      inset: 0;
+      background: #f4f6fb;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 12px;
+      transition: opacity 0.3s ease;
+    }
+    #loadingOverlay.hide {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .spinner {
+      width: 34px;
+      height: 34px;
+      border: 3px solid #e5e7eb;
+      border-top: 3px solid #2563eb;
+      border-radius: 50%;
+      animation: spin 0.7s linear infinite;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    #loadingOverlay p {
+      color: #6b7280;
+      font-size: 13px;
+      margin: 0;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="app-wrapper">
+    <div id="loadingOverlay">
+      <div class="spinner"></div>
+      <p>Memuat aplikasi keuangan keluarga...</p>
+    </div>
+
+    <!--
+      GANTI URL DI BAWAH INI dengan Web App URL hasil Deploy dari Apps Script Anda.
+      Contoh: https://script.google.com/macros/s/AKfycb.../exec
+    -->
+    <iframe
+      id="appFrame"
+      src="GANTI_DENGAN_URL_WEB_APP_ANDA"
+      title="Aplikasi Keuangan Keluarga"
+      allow="clipboard-write"
+      onload="document.getElementById('loadingOverlay').classList.add('hide')">
+    </iframe>
+  </div>
+
+</body>
+</html>
