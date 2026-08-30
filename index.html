@@ -12,16 +12,32 @@
       height: 100%;
       background: #0f172a;
       font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      /* KUNCI BUG: sebelumnya halaman ini (pembungkus iframe) bisa ikut ter-scroll di HP kalau
+         tinggi iframe di dalamnya meleset lebih tinggi dari layar (lihat catatan di
+         .app-wrapper). Dengan overflow:hidden di sini, halaman luar TIDAK PERNAH scroll --
+         yang scroll cuma konten di DALAM app (sudah diatur di index.html Apps Script-nya). */
+      overflow: hidden;
+      overscroll-behavior: none;
     }
 
     /* Wrapper agar rasio mobile terlihat rapi juga saat dibuka di desktop */
     .app-wrapper {
       max-width: 480px;
       margin: 0 auto;
+      /* KUNCI BUG "floating menu hilang di HP": 100vh di banyak browser HP dihitung seolah
+         address bar sudah collapse (lebih tinggi dari layar yang BENAR-BENAR terlihat saat
+         halaman baru dibuka). Karena iframe di dalamnya height:100%, iframe pun ikut lebih
+         tinggi dari layar -- tombol +/menu di bagian bawah app jadi terdorong ke bawah layar
+         (kelihatannya "hilang", padahal cuma butuh scroll turun). 100dvh mengikuti tinggi
+         layar yang benar-benar terlihat, dan --app-vh (dihitung via JS di bawah) jadi
+         cadangan untuk browser/webview lama yang belum kenal dvh. */
       height: 100vh;
+      height: 100dvh;
+      height: var(--app-vh, 100dvh);
       background: #f4f6fb;
       box-shadow: 0 0 40px rgba(0,0,0,0.4);
       position: relative;
+      overflow: hidden;
     }
 
     iframe#appFrame {
@@ -64,6 +80,26 @@
   </style>
 </head>
 <body>
+  <script>
+    // Cadangan untuk browser/webview HP yang belum dukung 100dvh dengan baik (lihat catatan
+    // di CSS .app-wrapper). Menghitung tinggi layar yang BENAR-BENAR terlihat lalu simpan
+    // sebagai CSS variable --app-vh.
+    (function () {
+      function setAppVH() {
+        var h = (window.visualViewport && window.visualViewport.height) ||
+                window.innerHeight ||
+                document.documentElement.clientHeight;
+        document.documentElement.style.setProperty('--app-vh', h + 'px');
+      }
+      setAppVH();
+      window.addEventListener('resize', setAppVH);
+      window.addEventListener('orientationchange', setAppVH);
+      if (window.visualViewport) {
+        window.visualViewport.addEventListener('resize', setAppVH);
+        window.visualViewport.addEventListener('scroll', setAppVH);
+      }
+    })();
+  </script>
 
   <div class="app-wrapper">
     <div id="loadingOverlay">
